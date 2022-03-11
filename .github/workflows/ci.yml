@@ -37,7 +37,7 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/assembled/ui/
           mkdir -p $GITHUB_WORKSPACE/assembled/libs/
           CONDUCTOR_DIR=$(mktemp -d)
-          git clone --single-branch --branch "main" "https://github.com/orkes-io/conductor.git" "$CONDUCTOR_DIR"
+          git clone --single-branch --branch "main" "https://github.com/Netflix/conductor.git" "$CONDUCTOR_DIR"
           cd $CONDUCTOR_DIR
           ./gradlew build publishToMavenLocal -x test
           CONDUCTOR_VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
