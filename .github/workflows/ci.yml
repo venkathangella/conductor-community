@@ -52,13 +52,3 @@ jobs:
         run: |
           echo "Building against Conductor core version $CONDUCTOR_VERSION"
           ./gradlew -Dconductor.version=$CONDUCTOR_VERSION build --scan
-      - name: Build and Publish snapshot
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        run: |
-          echo "Running build for commit ${{ github.sha }}"
-          ./gradlew build snapshot --scan
-        env:
-          NETFLIX_OSS_SIGNING_KEY: ${{ secrets.ORG_SIGNING_KEY }}
-          NETFLIX_OSS_SIGNING_PASSWORD: ${{ secrets.ORG_SIGNING_PASSWORD }}
-          NETFLIX_OSS_REPO_USERNAME: ${{ secrets.ORG_NETFLIXOSS_USERNAME }}
-          NETFLIX_OSS_REPO_PASSWORD: ${{ secrets.ORG_NETFLIXOSS_PASSWORD }}
