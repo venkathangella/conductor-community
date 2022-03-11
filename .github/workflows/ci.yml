@@ -51,7 +51,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           echo "Building against Conductor core version $CONDUCTOR_VERSION"
-          ./gradlew -Dconductor.version=$CONDUCTOR_VERSION build --scan -x test
+          ./gradlew -Dconductor.version=$CONDUCTOR_VERSION build --scan
       - name: Build and Publish snapshot
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
