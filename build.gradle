@@ -51,10 +51,15 @@ allprojects {
 
     repositories {
         mavenCentral()
+        mavenLocal()
 
         // oss-candidate for -rc.* verions:
         maven {
             url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
+        }
+
+        maven {
+            url "https://artifacts-oss.netflix.net/artifactory/maven-oss-snapshots"
         }
 
         /**

@@ -31,6 +31,19 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
+      - name: Checkout and build conductor fork code
+        id: conductor-fork-build
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/assembled/ui/
+          mkdir -p $GITHUB_WORKSPACE/assembled/libs/
+          CONDUCTOR_DIR=$(mktemp -d)
+          git clone --single-branch --branch "main" "https://github.com/orkes-io/conductor.git" "$CONDUCTOR_DIR"
+          cd $CONDUCTOR_DIR
+          ./gradlew build publishToMavenLocal -x test
+          CONDUCTOR_VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
+          echo "::set-output name=CONDUCTOR_VERSION::$CONDUCTOR_VERSION"
+          echo ">>>> List the maven local repo files"
+          ls -ltr ~/.m2/repository/com/netflix/conductor/conductor-server/
       - name: Build with Gradle
         if: github.ref != 'refs/heads/main'
         env:
@@ -39,7 +52,7 @@ jobs:
         run: |
           export CORE_CONDUCTOR_VERSION=$(./gradlew conductor-workflow-event-listener:dependencies | grep conductor-core | grep ">" | tail -1 | cut -d ' ' -f4)
           echo "Building against Conductor core version $CORE_CONDUCTOR_VERSION"
-          ./gradlew build --scan -x test
+          ./gradlew -Dconductor.version=$CORE_CONDUCTOR_VERSION =build --scan -x test
       - name: Build and Publish snapshot
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
